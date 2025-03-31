@@ -1,7 +1,9 @@
 from botcity.web import WebBot, Browser, By
+from botcity.web.parsers import table_to_dict
 from botcity.maestro import *
 from dotenv import load_dotenv
 import os
+from utils.function_foi_baixado import foi_baixado
 
 # Disable errors if we are not connected to Maestro
 BotMaestroSDK.RAISE_NOT_CONNECTED = False
@@ -51,32 +53,27 @@ def main():
     botao_acessar = webbot.find_element(selector="input.btn", by= By.CSS_SELECTOR)
     botao_acessar.click()
 
-    # Baixar arquivos. 
-    def what_files(tr) -> str:
-        """
-        Retorna o nome do material disponível de uma célula da segunda coluna da tabela "materiais de aula"
-        """
-        link_material = tr.find_element( By.CSS_SELECTOR, 'td:nth-child(2)').text.encode("utf-8")
-        return link_material
 
+    # Clicar em cada disciplina e baixar arquivos necessários 
     disciplinas = webbot.find_elements("Acessar Disciplina", By.LINK_TEXT)
     for elemento in disciplinas:
+
         # Apertar em "Acessar Disciplina".
         elemento.click()
-        # "Materiais de aula".
+
+        # "Materiais de aula". É uma aba que precisa ser clicada. Mostra uma tabela com os materiais.
         materiais_de_aula = webbot.find_element("/html/body/div/main/ul[1]/li[4]/a", By.XPATH)
         webbot.wait_for_element_visibility(element= materiais_de_aula, visible= True, waiting_time= 10_000)
         materiais_de_aula.click()
-        # Materias disponíveis.
-        tabela = webbot.find_element("/html/body/div/main/div[7]/div/div/table", By.XPATH)
-        itens = tabela.find_elements(By.CSS_SELECTOR, "tbody>tr")
-        arquivos_a_baixar = [what_files(x) for x in itens]
 
-        # Baixar arquivos necessários.
-        arquivos_necessarios = [x for x in arquivos_a_baixar if  x not in arquivos_baixados]
-        for arquivo in arquivos_necessarios:
-            # Baixe o arquivo.
-            pass
+        # Tabela Materiais de Estudo. 
+        # "Descrição" é a coluna onde estão os links para materias lançados pelos professores.
+        elemento_tabela = webbot.find_element("/html/body/div/main/div[7]/div/div/table", By.XPATH)
+        tabela = table_to_dict(elemento_tabela)
+        links_para_materiais = [x['Descrição'] for x in tabela]
+        arquivos_a_baixar = foi_baixado(links_para_materiais)
+        break
+        
 
     # Uncomment to mark this task as finished on BotMaestro
     # maestro.finish_task(
