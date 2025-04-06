@@ -3,7 +3,7 @@ from botcity.web.parsers import table_to_dict
 from botcity.maestro import *
 from dotenv import load_dotenv
 import os
-from utils.function_foi_baixado import foi_baixado
+from utils.function_what_to_download import to_download
 
 # Disable errors if we are not connected to Maestro
 BotMaestroSDK.RAISE_NOT_CONNECTED = False
@@ -71,7 +71,8 @@ def main():
         elemento_tabela = webbot.find_element("/html/body/div/main/div[7]/div/div/table", By.XPATH)
         tabela = table_to_dict(elemento_tabela)
         links_para_materiais = [x['Descrição'] for x in tabela]
-        arquivos_a_baixar = foi_baixado(links_para_materiais)
+        arquivos_a_baixar = to_download(links_para_materiais)
+        print(arquivos_a_baixar)
         break
         
 
