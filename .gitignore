@@ -1,2 +1,3 @@
 escritor/resources/.env
 escritor/utils/__pycache__
+escritor/testes.py
