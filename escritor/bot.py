@@ -3,7 +3,9 @@ from botcity.web.parsers import table_to_dict
 from botcity.maestro import *
 from dotenv import load_dotenv
 import os
+import ipdb
 from utils.function_what_to_download import to_download
+
 
 # Disable errors if we are not connected to Maestro
 BotMaestroSDK.RAISE_NOT_CONNECTED = False
@@ -36,30 +38,25 @@ def main():
     # Implement here your logic...
     
     # Variaveis de ambiente.
-    load_dotenv("escritor_robotico/escritor/resources/.env")
-    meu_nome = os.getenv('meu_nome')
-    minha_senha = os.getenv('minha_senha')
-
-    # Obtém os arquivos já baixados
-    arquivos_baixados = ["arquivo1", "arquivo 2"]
-
+    meu_nome = os.environ["usuario_suap"]
+    minha_senha = os.environ["senha_suap"]
     # Fazer Login no SUAP
-    nome = webbot.find_element(selector= "id_username", by= By.ID)
-    nome.send_keys(meu_nome)
+    campo_nome = webbot.find_element(selector= "id_username", by= By.ID)
+    campo_nome.send_keys(meu_nome)
 
-    senha = webbot.find_element(selector="id_password", by= By.ID)
-    senha.send_keys(minha_senha)
+    campo_senha = webbot.find_element(selector="id_password", by= By.ID)
+    campo_senha.send_keys(minha_senha)
 
     botao_acessar = webbot.find_element(selector="input.btn", by= By.CSS_SELECTOR)
     botao_acessar.click()
 
 
-    # Clicar em cada disciplina e baixar arquivos necessários 
+    # Clicar em cada disciplina e baixar arquivos necessários.
     disciplinas = webbot.find_elements("Acessar Disciplina", By.LINK_TEXT)
-    for elemento in disciplinas:
+    for disciplina in disciplinas:
 
         # Apertar em "Acessar Disciplina".
-        elemento.click()
+        disciplina.click()
 
         # "Materiais de aula". É uma aba que precisa ser clicada. Mostra uma tabela com os materiais.
         materiais_de_aula = webbot.find_element("/html/body/div/main/ul[1]/li[4]/a", By.XPATH)
@@ -69,11 +66,25 @@ def main():
         # Tabela Materiais de Estudo. 
         # "Descrição" é a coluna onde estão os links para materias lançados pelos professores.
         elemento_tabela = webbot.find_element("/html/body/div/main/div[7]/div/div/table", By.XPATH)
-        tabela = table_to_dict(elemento_tabela)
-        links_para_materiais = [x['Descrição'] for x in tabela]
+        tabela_materiais = table_to_dict(elemento_tabela)
+
+        links_para_materiais = [x['descrição'] for x in tabela_materiais]
         arquivos_a_baixar = to_download(links_para_materiais)
-        print(arquivos_a_baixar)
-        break
+        
+        # Clicar nos links para download de materiais.
+        for name_file in arquivos_a_baixar:
+            link = webbot.find_element(selector= name_file, by= By.LINK_TEXT)
+            link.click()
+        
+        # Voltar para a página onde estão todas as disciplinas. 
+        webbot.back()
+        webbot.back()
+
+        # Esperar a página carregar. 
+        titulo_qualquer = webbot.find_element("Minhas Disciplinas", By.LINK_TEXT)
+        webbot.wait_for_element_visibility(titulo_qualquer, visible= True, waiting_time= 10_000)
+
+
         
 
     # Uncomment to mark this task as finished on BotMaestro
@@ -91,4 +102,5 @@ def not_found(label):
 
 
 if __name__ == '__main__':
+    ipdb.set_trace()
     main()

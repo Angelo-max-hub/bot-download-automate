@@ -1,4 +1,5 @@
 import os
+import ipdb
 
 def to_download(a_baixar: list[str]) -> list[str]:
     """
@@ -11,16 +12,16 @@ def to_download(a_baixar: list[str]) -> list[str]:
     # Os nomes dos downloads salvos são muito diferentes dos arquivos originais disponiveis no SUAP, então 
     # verifico se o primeiro e último nome dos arquivos originais está em algum item de 
     # "files_baixados", porque geralmente os nomes antigos se mantém em algum lugar do novo (veja
-    # "foi_baixado" função).
-    files_baixados = _all_the_files()
+    # "_foi_baixado" função).
+    files_ja_baixados = _all_the_files()
     for file in a_baixar:
-        if _foi_baixado(file, files_baixados):
+        if not _foi_baixado(file, files_ja_baixados):
             arquivos_a_baixar.append(file)
 
     return arquivos_a_baixar
 
 
-def _foi_baixado(file: str, downloads):
+def _foi_baixado(file: str, downloads) -> bool:
     file_split = file.split(" ")
     for download in downloads:
         if file_split[0] in download and file_split[-1] in download:
@@ -40,7 +41,7 @@ def _all_the_files() -> list[str]:
                           "doc_pasta_pessoal": "/home/angelo/Área de trabalho/documentos/documentos da escola"}
     arquivos_existentes = []
 
-    for diretorio in destinos_documento.values:
+    for diretorio in destinos_documento.values():
         conteudo = os.listdir(diretorio)
         arquivos_filtrados = filter(_tipo_certo, conteudo)
         arquivos_existentes.extend(list(arquivos_filtrados))
@@ -53,4 +54,4 @@ def _tipo_certo(arquivo: str) -> bool:
     return extencao in tipos_validos
 
 if __name__ == "__main__":
-   pass
+   print(to_download(["Gêneros textuais", "Coisa aleatoria"]))
