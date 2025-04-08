@@ -24,5 +24,5 @@ Ficarei feliz de receber sugestões sobre o projeto.
 # O código em ação
 Dentro da pasta "resources", há um arquivo ".mp4" que mostra automação acontecendo.
 
-# Presensa de dados sensíveis
+# Presença de dados sensíveis
 Me esqueci de colocar o arquivo ".env" com minha conta e senha do SUAP no gitignore, então ele foi publicado com o resto do projeto. Mas já mudei a senha da conta, e o arquivo .env não estará nos próximos commits.
