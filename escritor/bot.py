@@ -1,7 +1,6 @@
 from botcity.web import WebBot, Browser, By
 from botcity.web.parsers import table_to_dict
 from botcity.maestro import *
-from botcity.web.browsers.firefox import default_options
 import os
 import ipdb
 from utils.function_what_to_download import to_download
@@ -78,7 +77,6 @@ def main():
         tabela_materiais = table_to_dict(elemento_tabela)
 
         links_para_materiais = [x['descrição'] for x in tabela_materiais]
-        links_processados = [processar(x) for x in links_para_materiais]
         arquivos_a_baixar = to_download(links_para_materiais)
 
         # Clicar nos links para download de materiais.

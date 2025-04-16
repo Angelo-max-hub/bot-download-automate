@@ -1,7 +1,8 @@
+from processamento_de_texto import verificacao_de_igualdade as vi
 import os
 import ipdb
-cm = lambda x: os.system(x)
-def to_download(a_baixar: list[str]) -> list[str]:
+cm = lambda: os.system(input("> "))
+def to_download(a_baixar: list[str], baixado: list[str]) -> list[str]:
     """
     Retorna quais arquivos não foram baixados anteriormente.
 
@@ -13,28 +14,44 @@ def to_download(a_baixar: list[str]) -> list[str]:
     # verifico se o primeiro ou último nome dos arquivos originais está em algum item de 
     # "files_baixados", porque geralmente os nomes antigos se mantém em algum lugar do novo (veja
     # "_foi_baixado" função).
-    files_ja_baixados = _all_the_files()
-    ipdb.set_trace()
-    for file in a_baixar:
-        if not _foi_baixado(file, files_ja_baixados):
-            arquivos_a_baixar.append(file)
+    arquivos_a_baixar = _filtrar_downloads_nao_feitos(a_baixar, baixado)
 
     return arquivos_a_baixar
 
 
-def _foi_baixado(file: str, downloads) -> bool:
-    file_split = file.split(" ")
+def _filtrar_downloads_nao_feitos(downloads: list[str], files: list[str]) -> list[str]:
+    ipdb.set_trace()
+    arquivos_a_baixar = []
+    par_encontrado = False
     for download in downloads:
-        if file_split[0] in download or file_split[-1] in download:
-            return True
+        for file in files:
+            if vi.verificar_igualdade1(download, file):
+                arquivos_a_baixar.append(download)
+                files.remove(file)
+                par_encontrado = True
+                break
+
+        if not par_encontrado:
+           correspondente = _verificacao_avancada_correspondencia(download, files) # "" or "string"
+           if correspondente:
+               arquivos_a_baixar.append(correspondente)
+
+    return arquivos_a_baixar
+
+def _verificacao_avancada_correspondencia(download: str, files: list[str]) -> str:
+    for file in files:
+        if vi.verificar_igualdade2(download, file):
+            return file
+        
+    return False
 def _all_the_files() -> list[str]:
     """
     Retorna uma lista com todos os arquivos (relevantes) já baixados no computador.
 
     Parameters:
-        Nothing
+    Nothing
     Returns:
-        Uma lista contendo os nomes de documentos salvos no computador.
+    Uma lista contendo os nomes de documentos salvos no computador.
     """
     # Todos os documentos que são baixados no SUAP estão no Desktop ou em uma subpasta dedicada.
     destinos_documento = {"desktop": r"/home/angelo/Área de trabalho",
@@ -56,5 +73,6 @@ def _tipo_certo(arquivo: str) -> bool:
 
 
 if __name__ == "__main__":
-    arquivos_a_baixar = to_download(["Teoria da Comunicação - Roman Jackobson",
-                                        "Linguagem falada e linguagem escrita"])
+    ipdb.set_trace()
+    arquivos_a_baixar = to_download(["teoria da comunicação - roman jackobson",
+                                        "linguagem falada e linguagem escrita"], _all_the_files())
