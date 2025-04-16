@@ -3,7 +3,9 @@ Criei este bot para agilizar um processo que até hoje fiz manualmente: entrar n
 reorganizar os arquivos baixados e já existentes em diferentes pastas.
 
 # Versão atual.
-Alpha. Não está finalizado.
+Alpha. Não está finalizado. Atualmente, o bot, que deveria entrar na platarforma de ensino SUAP (da minha faculdade) e baixar todos os materiais de aula necessários, não consegue fazer isso corretamente. 
+
+O script Python no arquivo "main" possui alguns erros também. Apesar disso, não o corrigirei agora, porque estou trabalhando em um módulo C responsável por processamento de texto, que usarei para que o bot apenas baixe arquivos que ainda não foram baixados (o módulo irá comparar 2 nomes de arquivos - um link e um file salvo - e retornará "True" se representam o mesmo arquivo, e "False", caso o contrário). Ele é necessário porque os dois (link para download e arquivo salvo) são muito diferentes, o que dificulta determinar um download já foi feito com base nos arquivos salvos. Estou aberto a sugestões sobre alternativas para resolver esse problema.
 
 # Ferramentas usadas
 Usei ou usarei as seguintes ferramentas:
